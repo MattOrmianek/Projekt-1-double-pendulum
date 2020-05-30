@@ -8,7 +8,7 @@ from ipywidgets import interact, interactive, fixed, interact_manual
 import ipywidgets as widgets
 import tkinter as tk
 import matplotlib
-
+matplotlib.use('TkAgg')
 
 def show_entry_fields():
     global mass1, mass2, length1, length2, angle1, angle2, G
@@ -19,6 +19,7 @@ def show_entry_fields():
     angle1 = float(e5.get()) 
     angle2 = float(e6.get()) 
     G = float(e7.get())
+    master.quit()
     master.destroy()
 master = tk.Tk()
 tk.Label(master, text="L1").grid(row=0)
@@ -202,27 +203,33 @@ ax.grid()
 line, = ax.plot([],[],'o-',lw=2)
 time_text = ax.text(0.02,0.95,'', transform=ax.transAxes)
 energy_text = ax.text(0.02,0.90,'', transform=ax.transAxes)
-
+path, = ax.plot([],[], color='C0')
+tempx = []
+tempy = []
 def init():
     line.set_data([],[])
     time_text.set_text('')
     energy_text.set_text('')
+    path.set_data([], [])
     return line, time_text, energy_text
 
 def animate(i):
     global pendulum, dt
+    tempx.append(pendulum.position()[0][2])
+    tempy.append(pendulum.position()[1][2])
+
     pendulum.step(dt)
     line.set_data(*pendulum.position())
     time_text.set_text('time = %.1f' % pendulum.time_elapsed)
     energy_text.set_text('energy = %.3f J' % pendulum.energy())
-    
-    return line, time_text, energy_text
+    path.set_data(tempx,tempy)
+    return line, time_text, energy_text, path
 
 from time import time
 t0 = time()
 animate(0)
 t1 = time()
-interval = 1000 * dt - (t1-t0)
+interval = 800 * dt - (t1-t0)
 
 ani = animation.FuncAnimation(fig,animate,frames=150,
                             interval=interval, blit=True, init_func=init)
@@ -230,28 +237,28 @@ ani = animation.FuncAnimation(fig,animate,frames=150,
 
 
 ax2 = fig.add_subplot(grid[1, 2],aspect='equal', autoscale_on=False,
-                    xlim=(-40,40),ylim=(-40,40))
+                    xlim=(-30,30),ylim=(-30,30))
 
 
 ax2.grid()
 line2, = ax2.plot([],[],'o-')
-time_text2 = ax2.text(0.02,0.95,'', transform=ax2.transAxes)
-energy_text2 = ax2.text(0.02,0.90,'', transform=ax2.transAxes)
-
+path2, = ax2.plot([],[],color='C0')
+temp2x = []
+temp2y = []
 def init2():
     line2.set_data([],[])
-    time_text2.set_text('')
-    energy_text2.set_text('')
-    return line2, time_text2, energy_text2
+    path2.set_data([],[])
+    return line2
 
 def animate2(i):
     global pendulum, dt
     pendulum.step(dt)
     line2.set_data(*pendulum.thetaandtheta())
-    time_text2.set_text('time = %.1f' % pendulum.time_elapsed)
-    energy_text2.set_text('energy = %.3f J' % pendulum.energy())
-    
-    return line2, time_text2, energy_text2
+    print(pendulum.thetaandtheta()[0])
+    temp2x.append(pendulum.thetaandtheta()[0])
+    temp2y.append(pendulum.thetaandtheta()[1])
+    path2.set_data(temp2x,temp2y)
+    return line2, path2
 
 animate2(0)
 ani2 = animation.FuncAnimation(fig,animate2,frames=150,
@@ -263,22 +270,17 @@ ax3 = fig.add_subplot(grid[0, 1:],aspect='equal', autoscale_on=True,
 
 ax3.grid()
 line3, = ax3.plot([],[],'o-')
-time_text3 = ax3.text(0.02,0.85,'', transform=ax3.transAxes)
-energy_text3 = ax3.text(0.02,0.75,'', transform=ax3.transAxes)
 
 def init3():
     line3.set_data([],[])
-    time_text3.set_text('')
-    energy_text3.set_text('')
-    return line3, time_text3, energy_text3
+    
+    return line3
 
 def animate3(i):
     global pendulum, dt
     pendulum.step(dt)
     line3.set_data(*pendulum.theta1(pendulum.time_elapsed))
-    time_text3.set_text('time = %.1f' % pendulum.time_elapsed)
-    energy_text3.set_text('energy = %.3f J' % pendulum.energy())
-    return line3, time_text3, energy_text3
+    return line3
 
 animate3(0)
 
@@ -292,22 +294,16 @@ ax4 = fig.add_subplot(grid[1, :2],aspect='equal', autoscale_on=True,
 
 ax4.grid()
 line4, = ax4.plot([],[],'o-')
-time_text4 = ax4.text(0.02,0.85,'', transform=ax4.transAxes)
-energy_text4 = ax4.text(0.02,0.75,'', transform=ax4.transAxes)
 
 def init4():
     line4.set_data([],[])
-    time_text4.set_text('')
-    energy_text4.set_text('')
-    return line4, time_text4, energy_text4
+    return line4
 
 def animate4(i):
     global pendulum, dt
     pendulum.step(dt)
     line4.set_data(*pendulum.theta2(pendulum.time_elapsed))
-    time_text4.set_text('time = %.1f' % pendulum.time_elapsed)
-    energy_text4.set_text('energy = %.3f J' % pendulum.energy())
-    return line4, time_text4, energy_text4
+    return line4
 
 animate4(0)
 
