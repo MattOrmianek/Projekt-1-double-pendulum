@@ -206,10 +206,10 @@ elif length1 + length2 >32:
 
 pendulum = DoublePendulum([angle1,0.0,angle2,0.0],length1,length2,mass1,mass2,G)
 dt = 1./30 #fps
+grid = plt.GridSpec(2, 3, wspace=0.4, hspace=0.3)
+fig = plt.figure(1)
 
-fig = plt.figure()
-
-ax = fig.add_subplot(111,aspect='equal', autoscale_on=False,
+ax = fig.add_subplot(grid[0, 0],aspect='equal', autoscale_on=False,
                     xlim=(lim1,lim2),ylim=(lim1,lim2),alpha=0.5)
 
 ax.grid()
@@ -227,7 +227,6 @@ def animate(i):
     global pendulum, dt
     pendulum.step(dt)
     line.set_data(*pendulum.position())
-
     time_text.set_text('time = %.1f' % pendulum.time_elapsed)
     energy_text.set_text('energy = %.3f J' % pendulum.energy())
     pendulum.test(dt)
@@ -244,10 +243,9 @@ ani = animation.FuncAnimation(fig,animate,frames=150,
 
 
 
-
-fig2 = plt.figure()
-ax2 = fig2.add_subplot(111,aspect='equal', autoscale_on=False,
+ax2 = fig.add_subplot(grid[1, 2],aspect='equal', autoscale_on=False,
                     xlim=(-40,40),ylim=(-40,40))
+
 
 ax2.grid()
 line2, = ax2.plot([],[],'o-')
@@ -270,17 +268,17 @@ def animate2(i):
     return line2, time_text2, energy_text2
 
 animate2(0)
-ani2 = animation.FuncAnimation(fig2,animate2,frames=150,
+ani2 = animation.FuncAnimation(fig,animate2,frames=150,
                             interval=interval, init_func=init2)
 
-fig3 = plt.figure()
-ax3 = fig3.add_subplot(111,aspect='equal', autoscale_on=True,
+
+ax3 = fig.add_subplot(grid[0, 1:],aspect='equal', autoscale_on=True,
                     xlim=(0,40),ylim=(-8,8))
 
 ax3.grid()
 line3, = ax3.plot([],[],'o-')
-time_text3 = ax3.text(0.02,0.95,'', transform=ax3.transAxes)
-energy_text3 = ax3.text(0.02,0.90,'', transform=ax3.transAxes)
+time_text3 = ax3.text(0.02,0.85,'', transform=ax3.transAxes)
+energy_text3 = ax3.text(0.02,0.75,'', transform=ax3.transAxes)
 
 def init3():
     line3.set_data([],[])
@@ -298,19 +296,18 @@ def animate3(i):
 
 animate3(0)
 
-ani3 = animation.FuncAnimation(fig3,animate3,frames=150,
+ani3 = animation.FuncAnimation(fig,animate3,frames=150,
                             interval=interval, init_func=init3)
 
 dt = 1./30
 
-fig4 = plt.figure()
-ax4 = fig4.add_subplot(111,aspect='equal', autoscale_on=True,
+ax4 = fig.add_subplot(grid[1, :2],aspect='equal', autoscale_on=True,
                     xlim=(0,40),ylim=(-8,8))
 
 ax4.grid()
 line4, = ax4.plot([],[],'o-')
-time_text4 = ax4.text(0.02,0.95,'', transform=ax4.transAxes)
-energy_text4 = ax4.text(0.02,0.90,'', transform=ax4.transAxes)
+time_text4 = ax4.text(0.02,0.85,'', transform=ax4.transAxes)
+energy_text4 = ax4.text(0.02,0.75,'', transform=ax4.transAxes)
 
 def init4():
     line4.set_data([],[])
@@ -328,9 +325,8 @@ def animate4(i):
 
 animate4(0)
 
-ani4 = animation.FuncAnimation(fig4,animate4,frames=150,
+ani4 = animation.FuncAnimation(fig,animate4,frames=150,
                             interval=interval, init_func=init4)
 
-
-
+fig.set_size_inches(13.5, 8.5) #13.5 inches = 1296 px and 8.5 inches = 816 px
 plt.show()
