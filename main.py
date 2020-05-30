@@ -144,21 +144,7 @@ class DoublePendulum:
             K = 0.5 * (M1 * np.dot(vx,vx) + M2 * np.dot(vy,vy))
             return U+K
 
-    def test(self,state):
-        (L1,L2,M1,M2,G) = self.params
-        theta1 = self.state[0]
-        theta2 = self.state[2]
-        mtot = M1+M2
-        theta1dot = self.init_state[1] * np.pi/180
-        theta2dot = self.init_state[3] * np.pi/180
-        A = mtot * L1
-        B = M2 * L2 * np.cos(theta1 - theta2)
-        C = -M2 * L2 * theta2dot ** 2 * np.sin(theta1 - theta2) - mtot * G * np.sin(theta1)
-        D = L1 / L2 * np.cos(theta1-theta2)
-        E = (L1 * theta1dot ** 2 * np.sin(theta1 - theta2)- G * np.sin(theta2)) / L2
-        theta1 = (C-B*E)/(A-B*D)
-        theta2 = E - D * theta1dot
-        return [theta1,theta2]
+    
 
     def dstate_dt(self,state,t):
         (M1,M2,L1,L2,G)=self.params
@@ -229,7 +215,7 @@ def animate(i):
     line.set_data(*pendulum.position())
     time_text.set_text('time = %.1f' % pendulum.time_elapsed)
     energy_text.set_text('energy = %.3f J' % pendulum.energy())
-    pendulum.test(dt)
+    
     return line, time_text, energy_text
 
 from time import time
@@ -264,7 +250,7 @@ def animate2(i):
     line2.set_data(*pendulum.thetaandtheta())
     time_text2.set_text('time = %.1f' % pendulum.time_elapsed)
     energy_text2.set_text('energy = %.3f J' % pendulum.energy())
-    pendulum.test(dt)
+    
     return line2, time_text2, energy_text2
 
 animate2(0)
