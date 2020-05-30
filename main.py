@@ -6,6 +6,54 @@ import scipy.integrate as integrate
 import matplotlib.animation as animation
 from ipywidgets import interact, interactive, fixed, interact_manual
 import ipywidgets as widgets
+import tkinter as tk
+
+
+def show_entry_fields():
+    
+    global mass1, mass2, length1, length2, angle1, angle2, G
+    length1 = float(e1.get())
+    length2 = float(e2.get())
+    mass1 = float(e3.get())
+    mass2 = float(e4.get()) 
+    angle1 = float(e5.get()) 
+    angle2 = float(e6.get()) 
+    G = float(e7.get()) 
+   
+
+
+master = tk.Tk()
+tk.Label(master, text="L1").grid(row=0)
+tk.Label(master, text="L2").grid(row=1)
+tk.Label(master, text="m1").grid(row=2)
+tk.Label(master, text="m2").grid(row=3)
+tk.Label(master, text="Teta1").grid(row=4)
+tk.Label(master, text="Teta2").grid(row=5)
+tk.Label(master, text="G").grid(row=6)
+e1 = tk.Entry(master)
+e2 = tk.Entry(master)
+e3 = tk.Entry(master)
+e4 = tk.Entry(master)
+e5 = tk.Entry(master)
+e6 = tk.Entry(master)
+e7 = tk.Entry(master)
+e1.grid(row=0, column=1)
+e2.grid(row=1, column=1)
+e3.grid(row=2, column=1)
+e4.grid(row=3, column=1)
+e5.grid(row=4, column=1)
+e6.grid(row=5, column=1)
+e7.grid(row=6, column=1)
+
+
+
+tk.Button(master, 
+          text='Show', command=show_entry_fields).grid(row=7, 
+                                                       column=1, 
+                                                       sticky=tk.W, 
+                                                       pady=4)
+
+master.mainloop() 
 
 
 class DoublePendulum:
@@ -84,7 +132,6 @@ class DoublePendulum:
                 - (M1 + M2) * L1 * state[1] * state[1] * sin_delta
                 - (M1 + M2) * G * sin(state[2])) / den2
 
-        
         global temp
         temp = dydx
         return dydx
@@ -92,13 +139,16 @@ class DoublePendulum:
     def step(self,dt):
         self.state = integrate.odeint(self.dstate_dt, self.state, [0,dt])[1]
         self.time_elapsed += dt
-    
-pendulum = DoublePendulum([120.,0.0,10.,0.0])
+
+
+pendulum = DoublePendulum([angle1,0.0,angle2,0.0],length1,length2,mass1,mass2,G)
+
 dt = 1./30 #fps
+
 
 fig = plt.figure()
 ax = fig.add_subplot(111,aspect='equal', autoscale_on=False,
-                    xlim=(-2,2),ylim=(-2,2))
+                    xlim=(-2,2),ylim=(-2,2),alpha=0.5)
 
 ax.grid()
 line, = ax.plot([],[],'o-',lw=2)
@@ -115,17 +165,11 @@ def animate(i):
     global pendulum, dt
     pendulum.step(dt)
     line.set_data(*pendulum.position())
+
     time_text.set_text('time = %.1f' % pendulum.time_elapsed)
     energy_text.set_text('energy = %.3f J' % pendulum.energy())
     pendulum.test(dt)
     return line, time_text, energy_text
-
-
-
-
-
-
-
 
 
 from time import time
@@ -136,7 +180,6 @@ interval = 1000 * dt - (t1-t0)
 
 ani = animation.FuncAnimation(fig,animate,frames=150,
                             interval=interval, blit=True, init_func=init)
-
 
 
 class DoublePendulum2:
@@ -172,8 +215,6 @@ class DoublePendulum2:
         theta2 = E - D * theta1dot
         x=theta1
         y=theta2
-        print(x)
-        print(y)
         return (x,y)
 
     def energy(self):
@@ -228,15 +269,14 @@ class DoublePendulum2:
                 - (M1 + M2) * G * sin(state[2])) / den2
 
         
-        global temp
-        temp = dydx
         return dydx
 
     def step(self,dt):
         self.state = integrate.odeint(self.dstate_dt, self.state, [0,dt])[1]
         self.time_elapsed += dt
     
-pendulum2 = DoublePendulum2([120.,0.0,10.,0.0])
+pendulum2 = DoublePendulum2([angle1,0.0,angle2,0.0],length1,length2,mass1,mass2,G)
+
 dt = 1./30 #fps
 
 fig2 = plt.figure()
@@ -244,7 +284,7 @@ ax2 = fig2.add_subplot(111,aspect='equal', autoscale_on=False,
                     xlim=(-40,40),ylim=(-40,40))
 
 ax2.grid()
-line2, = ax2.plot([],[],'o-',lw=2)
+line2, = ax2.plot([],[],'o-')
 time_text2 = ax2.text(0.02,0.95,'', transform=ax2.transAxes)
 energy_text2 = ax2.text(0.02,0.90,'', transform=ax2.transAxes)
 
@@ -263,14 +303,6 @@ def animate2(i):
     pendulum2.test(dt)
     return line2, time_text2, energy_text2
 
-
-
-
-
-
-
-
-
 from time import time
 t0 = time()
 animate2(0)
@@ -278,7 +310,7 @@ t1 = time()
 interval = 1000 * dt - (t1-t0)
 
 ani2 = animation.FuncAnimation(fig2,animate2,frames=150,
-                            interval=interval, blit=True, init_func=init2)
+                            interval=interval, init_func=init2)
 
 plt.show()
 
