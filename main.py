@@ -203,6 +203,7 @@ ax.grid()
 line, = ax.plot([],[],'o-',lw=2)
 time_text = ax.text(0.02,0.95,'', transform=ax.transAxes)
 energy_text = ax.text(0.02,0.90,'', transform=ax.transAxes)
+info_text = ax.text(0.8,0.8,'',transform=ax.transAxes)
 path, = ax.plot([],[], color='C0')
 tempx = []
 tempy = []
@@ -210,6 +211,7 @@ def init():
     line.set_data([],[])
     time_text.set_text('')
     energy_text.set_text('')
+    info_text.set_text('Double pendulum')
     path.set_data([], [])
     return line, time_text, energy_text
 
@@ -243,9 +245,11 @@ ax2 = fig.add_subplot(grid[1, 2],aspect='equal', autoscale_on=False,
 ax2.grid()
 line2, = ax2.plot([],[],'o-')
 path2, = ax2.plot([],[],color='C0')
+info_text2 = ax2.text(0.8,0.8,'',transform=ax2.transAxes)
 temp2x = []
 temp2y = []
 def init2():
+    info_text2.set_text('Theta1/Theta2')
     line2.set_data([],[])
     path2.set_data([],[])
     return line2
@@ -254,7 +258,6 @@ def animate2(i):
     global pendulum, dt
     pendulum.step(dt)
     line2.set_data(*pendulum.thetaandtheta())
-    print(pendulum.thetaandtheta()[0])
     temp2x.append(pendulum.thetaandtheta()[0])
     temp2y.append(pendulum.thetaandtheta()[1])
     path2.set_data(temp2x,temp2y)
@@ -267,20 +270,27 @@ ani2 = animation.FuncAnimation(fig,animate2,frames=150,
 
 ax3 = fig.add_subplot(grid[0, 1:],aspect='equal', autoscale_on=True,
                     xlim=(0,40),ylim=(-8,8))
-
+info_text3 = ax3.text(0.8,0.8,'',transform=ax3.transAxes)
 ax3.grid()
 line3, = ax3.plot([],[],'o-')
-
+path3, = ax3.plot([],[],color='C0')
+temp3x = []
+temp3y = []
 def init3():
     line3.set_data([],[])
-    
+    path3.set_data([],[])
+    info_text3.set_text('Theta1/time')
     return line3
 
 def animate3(i):
     global pendulum, dt
     pendulum.step(dt)
+    temp3x.append(pendulum.theta1((pendulum.time_elapsed))[0])
+    temp3y.append(pendulum.theta1((pendulum.time_elapsed))[1])
     line3.set_data(*pendulum.theta1(pendulum.time_elapsed))
-    return line3
+    path3.set_data(temp3x,temp3y)
+
+    return line3, path3
 
 animate3(0)
 
@@ -294,16 +304,29 @@ ax4 = fig.add_subplot(grid[1, :2],aspect='equal', autoscale_on=True,
 
 ax4.grid()
 line4, = ax4.plot([],[],'o-')
+path4, = ax4.plot([],[],color='C0')
+info_text4 = ax4.text(0.4,0.2,'',transform=ax4.transAxes)
+temp4x = []
+temp4y = []
+
 
 def init4():
     line4.set_data([],[])
+    info_text4.set_text('Theta2/time')
+    path4.set_data([],[])
     return line4
 
 def animate4(i):
     global pendulum, dt
     pendulum.step(dt)
+    temp4x.append(pendulum.theta2(pendulum.time_elapsed)[0])
+    temp4y.append(pendulum.theta2(pendulum.time_elapsed)[1])
+    print(pendulum.theta2(pendulum.time_elapsed))
+    path4.set_data(temp4x,temp4y)
+
+    
     line4.set_data(*pendulum.theta2(pendulum.time_elapsed))
-    return line4
+    return line4, path4
 
 animate4(0)
 
