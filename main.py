@@ -86,7 +86,6 @@ class DoublePendulum:
         C = -M2 * L2 * theta2dot ** 2 * np.sin(theta1 - theta2) - mtot * G * np.sin(theta1)
         D = L1 / L2 * np.cos(theta1-theta2)
         E = (L1 * theta1dot ** 2 * np.sin(theta1 - theta2)- G * np.sin(theta2)) / L2
-
         theta1 = (C-B*E)/(A-B*D)
         theta2 = E - D * theta1dot
         x=theta1
@@ -105,7 +104,6 @@ class DoublePendulum:
         C = -M2 * L2 * theta2dot ** 2 * np.sin(theta1 - theta2) - mtot * G * np.sin(theta1)
         D = L1 / L2 * np.cos(theta1-theta2)
         E = (L1 * theta1dot ** 2 * np.sin(theta1 - theta2)- G * np.sin(theta2)) / L2
-
         theta1 = (C-B*E)/(A-B*D)
         theta2 = E - D * theta1dot
         x=dt
@@ -124,7 +122,6 @@ class DoublePendulum:
         C = -M2 * L2 * theta2dot ** 2 * np.sin(theta1 - theta2) - mtot * G * np.sin(theta1)
         D = L1 / L2 * np.cos(theta1-theta2)
         E = (L1 * theta1dot ** 2 * np.sin(theta1 - theta2)- G * np.sin(theta2)) / L2
-
         theta1 = (C-B*E)/(A-B*D)
         theta2 = E - D * theta1dot
         x=dt
@@ -144,8 +141,6 @@ class DoublePendulum:
             U = G * (M1 *y[0] +M2 * y[1])
             K = 0.5 * (M1 * np.dot(vx,vx) + M2 * np.dot(vy,vy))
             return U+K
-
-    
 
     def dstate_dt(self,state,t):
         (M1,M2,L1,L2,G)=self.params
@@ -293,22 +288,17 @@ def animate3(i):
     return line3, path3
 
 animate3(0)
-
 ani3 = animation.FuncAnimation(fig,animate3,frames=150,
                             interval=interval, init_func=init3)
-
 dt = 1./30
-
 ax4 = fig.add_subplot(grid[1, :2],aspect='equal', autoscale_on=True,
                     xlim=(0,40),ylim=(-8,8))
-
 ax4.grid()
 line4, = ax4.plot([],[],'o-')
 path4, = ax4.plot([],[],color='C0')
 info_text4 = ax4.text(0.4,0.2,'',transform=ax4.transAxes)
 temp4x = []
 temp4y = []
-
 
 def init4():
     line4.set_data([],[])
@@ -321,17 +311,13 @@ def animate4(i):
     pendulum.step(dt)
     temp4x.append(pendulum.theta2(pendulum.time_elapsed)[0])
     temp4y.append(pendulum.theta2(pendulum.time_elapsed)[1])
-    print(pendulum.theta2(pendulum.time_elapsed))
     path4.set_data(temp4x,temp4y)
 
     
     line4.set_data(*pendulum.theta2(pendulum.time_elapsed))
     return line4, path4
-
 animate4(0)
-
 ani4 = animation.FuncAnimation(fig,animate4,frames=150,
                             interval=interval, init_func=init4)
-
 fig.set_size_inches(13.5, 8.5) #13.5 inches = 1296 px and 8.5 inches = 816 px
 plt.show()
